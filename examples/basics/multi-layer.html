@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Multi layer | CARTO</title>
+  <title>Four color theorem | CARTO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <!-- Include CARTO VL JS -->
@@ -27,40 +27,40 @@
   <script>
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-      center: [0, 40],
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [-98.613281,43.866218],
       zoom: 4,
       dragRotate: false
     });
 
     carto.setDefaultAuth({
-      user: 'cartogl',
+      user: 'aromeu',
       apiKey: 'YOUR_API_KEY'
     });
 
-    const spainCitiesSource = new carto.source.SQL(`
+    const linesSource = new carto.source.SQL(`
       SELECT *
-      FROM ne_10m_populated_places_simple
-      WHERE adm0name = \'Spain\'
+      FROM world_borders_color_order_lines_segmentize_split
     `);
-    const spainCitiesViz = new carto.Viz(`
-      width: 6
-      color: rgb(237, 76, 89)
-      strokeWidth: 1
-      strokeColor: rgb(255, 255, 255)
+    const linesViz = new carto.Viz(`
+      width: ramp(log($color,1,5),[1.5,1.5])
+      color: ramp(buckets($color, 1, 2, 3, 4), Bold)
+      filter: torque(linear($ord, 0 , 52), 10, fade(0.1,0.5))+0.05
     `);
-    const spainCitiesLayer = new carto.Layer('spainCitiesLayer', spainCitiesSource, spainCitiesViz);
+    const linesLayer = new carto.Layer('linesLayer', linesSource, linesViz);
 
-    const europeCountriesSource = new carto.source.Dataset(`
-      ne_adm0_europe
+    const polySource = new carto.source.Dataset(`
+      us_states_color_order
     `);
-    const europeCountriesViz = new carto.Viz(`
-      color: rgba(127, 110, 186, 0.8)
+    const polyViz = new carto.Viz(`
+      color: ramp(buckets($color, 1, 2, 3, 4), Bold)
+      filter: torque(linear($ord, 0, 52), 10, fade(0,120))
     `);
-    const europeCountriesLayer = new carto.Layer('europeCountriesLayer', europeCountriesSource, europeCountriesViz);
+    const polyLayer = new carto.Layer('polyLayer', polySource, polyViz);
 
-    spainCitiesLayer.addTo(map, 'watername_ocean');
-    europeCountriesLayer.addTo(map, 'spainCitiesLayer');
+    linesLayer.addTo(map, 'watername_ocean');
+    polyLayer.addTo(map, 'linesLayer');
   </script>
 </body>
 </html>
+
