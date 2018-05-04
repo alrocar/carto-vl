@@ -25,7 +25,7 @@
 <body>
   <div id="map"></div>
   <script>
-    const duration = 5;
+    const duration = 10;
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
@@ -45,7 +45,7 @@
     const linesViz = new carto.Viz(`
       width: ramp(log($color,1,5),[1,1.5])
       color: ramp(buckets($color, 1, 2, 3, 4, 5), Bold)
-      filter: torque(linear($ord, 0 , 3904), ${duration}, fade(0.1,0.5))+0.05
+      filter: torque(linear($ord, 0 , 7000), ${duration}, fade(0.1,0.5))+0.05
     `);
     const linesLayer = new carto.Layer('linesLayer', linesSource, linesViz);
 
@@ -54,7 +54,7 @@
     `);
     const polyViz = new carto.Viz(`
       color: ramp(buckets($color, 1, 2, 3, 4, 5), Bold)
-      filter: torque(linear($ord, 0, 3904), ${duration}, fade(0,120))
+      filter: torque(linear($ord, 0, 7000), ${duration}, fade(0,120))
     `);
     const polyLayer = new carto.Layer('polyLayer', polySource, polyViz);
 
