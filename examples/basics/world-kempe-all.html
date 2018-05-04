@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Four color theorem | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <!-- Include CARTO VL JS -->
+  <script src="../../dist/carto-vl.js"></script>
+  <!-- Include Mapbox GL JS -->
+  <script src="../../vendor/mapbox-gl-dev.js"></script>
+  <!-- Include Mapbox GL CSS -->
+  <link href="../../vendor/mapbox-gl-dev.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    duration = 5;
+    map = new mapboxgl.Map({
+      container: 'map',
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [0, 0],
+      zoom: 1,
+      dragRotate: false
+    });
+
+    carto.setDefaultAuth({
+      user: 'aromeu',
+      apiKey: 'YOUR_API_KEY'
+    });
+
+     function createLines() {
+      linesSource = new carto.source.Dataset(`
+        us_states_1_kempe_adjacency_list_all
+      `);
+       linesViz0 = new carto.Viz(`
+        filter: $cartodb_id > 1000
+      `);
+       linesViz = new carto.Viz(`
+        width: ramp(log($color,1,5),[1.5,1.5])
+        color: ramp(buckets($color, 1, 2, 3, 4, 5), Earth)
+        filter: and($ord <= 48, torque(linear($ord, 0 , 48), ${duration}, fade(0.1,0.5)))+0.05
+      `);
+       linesViz2 = new carto.Viz(`
+        width: ramp(log($color,1,5),[1.5,1.5])
+        color: ramp(buckets($color, 1, 2, 3, 4, 5), Bold)
+        filter: and($ord >= 48, torque(linear($ord, 48, 95), ${duration}, fade(0.1,0.5)))+0.05
+      `);
+       vizsLine = [linesViz, linesViz2];
+       return new carto.Layer('linesLayer', linesSource, linesViz0);
+     }
+
+     function createPolys() {
+      polySource = new carto.source.Dataset(`
+        us_states_1_kempe_adjacency_list_all_1
+      `);
+       polyViz0 = new carto.Viz(`
+        filter: $cartodb_id > 1000
+      `);
+       polyViz = new carto.Viz(`
+        color: ramp(quantiles($cartodb_id, 5), SUNSETDARK)
+        filter: and($ord <= 48, torque(linear($ord, 0, 48), ${duration}, fade(120,0)))
+      `);
+       polyViz2 = new carto.Viz(`
+        color: ramp(buckets($color, 1, 2, 3, 4, 5), Bold)
+        filter: and($ord >= 48, torque(linear($ord, 48, 95), ${duration}, fade(0,120)))
+      `);
+       vizsPoly = [polyViz, polyViz2];
+       return new carto.Layer('polyLayer', polySource, polyViz0);
+     }
+
+     linesLayer = createLines();
+     polyLayer = createPolys();
+    linesLayer.addTo(map, 'watername_ocean');
+    polyLayer.addTo(map, 'linesLayer');
+
+
+
+    count = 0;
+    setInterval(() => {
+      duration = 50;
+      count++;
+      linesLayer.blendToViz(vizsLine[count % 2]);
+      polyLayer.blendToViz(vizsPoly[count % 2]);
+    }, duration * 1000)
+  </script>
+</body>
+</html>
+
