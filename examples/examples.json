@@ -4,147 +4,27 @@
     },
     "categories": [
         {
-            "title": "Basics",
+            "title": "Lines and polygons animation",
             "samples": [
                 {
-                    "title": "Add a layer",
-                    "desc": "Add one CARTO layer to your map",
-                    "file": "basics/single-layer.html"
+                    "title": "NYC",
+                    "desc": "NYC graph coloring",
+                    "file": "basics/nyc.html"
                 },
                 {
-                    "title": "Add multiple layers",
-                    "desc": "Add multiple CARTO layers to your map",
-                    "file": "basics/multi-layer.html"
+                    "title": "US counties",
+                    "desc": "US counties greedy coloring",
+                    "file": "basics/us-counties-greedy.html"
                 },
                 {
-                    "title": "Change the style",
-                    "desc": "Update the style of your layers",
-                    "file": "basics/change-style.html"
+                    "title": "World borders",
+                    "desc": "World borders greed coloring",
+                    "file": "basics/world-greedy.html"
                 },
                 {
-                    "title": "Change the source",
-                    "desc": "Update the source of your layers",
-                    "file": "basics/change-source.html"
-                }
-            ]
-        },
-        {
-            "title": "Expressions",
-            "samples": [
-                {
-                    "title": "Default style",
-                    "desc": "",
-                    "file": "expressions/default.html"
-                },
-                {
-                    "title": "Use color expressions",
-                    "desc": "",
-                    "file": "expressions/color.html"
-                },
-                {
-                    "title": "Use category ramp",
-                    "desc": "",
-                    "file": "expressions/ramp-category.html"
-                },
-                {
-                    "title": "Use numeric ramp",
-                    "desc": "",
-                    "file": "expressions/ramp-numeric.html"
-                },
-                {
-                    "title": "Setup ordering",
-                    "desc": "",
-                    "file": "expressions/order.html"
-                },
-                {
-                    "title": "Filter metadata",
-                    "desc": "",
-                    "file": "expressions/filter.html"
-                },
-                {
-                    "title": "Viewport interactivity",
-                    "desc": "",
-                    "file": "expressions/viewport.html"
-                },
-                {
-                    "title": "Animated dataset",
-                    "desc": "",
-                    "file": "expressions/animation.html"
-                },
-                {
-                    "title": "Torque",
-                    "desc": "",
-                    "file": "expressions/torque.html"
-                }
-            ]
-        },
-        {
-            "title": "Interactivity",
-            "samples": [
-                {
-                    "title": "Feature click",
-                    "desc": "Detect a feature click event",
-                    "file": "interactivity/feature-click.html"
-                },
-                {
-                    "title": "Feature hover",
-                    "desc": "Detect a feature hover events ",
-                    "file": "interactivity/feature-hover.html"
-                },
-                {
-                    "title": "Feature enter/leave",
-                    "desc": "Detect feature enter/leave events",
-                    "file": "interactivity/feature-enter-leave.html"
-                },
-                {
-                    "title": "Muliple features",
-                    "desc": "Detect multiple features from different layers",
-                    "file": "interactivity/multi-feature.html"
-                },
-                {
-                    "title": "Style a feature",
-                    "desc": "Style a detected feature",
-                    "file": "interactivity/style-feature.html"
-                }
-            ]
-        },
-        {
-            "title": "Misc",
-            "samples": [
-                {
-                    "title": "Guide",
-                    "desc": "Full reference guide example",
-                    "xfile": "misc/guide.html"
-                },
-                {
-                    "title": "Pop-Ups",
-                    "desc": "Create pop-up information windows and interact with your map",
-                    "file": "misc/popups.html"
-                },
-                {
-                    "title": "Legends",
-                    "desc": "Create dynamic legends",
-                    "xfile": "misc/legends.html"
-                },
-                {
-                    "title": "Most/less populated places",
-                    "desc": "Filter the 20 most/less populated places in the world",
-                    "file": "misc/populated-places.html"
-                },
-                {
-                    "title": "GeoJSON viewer",
-                    "desc": "Load and view GeoJSON files",
-                    "file": "misc/geojson-viewer.html"
-                },
-                {
-                    "title": "Error handling",
-                    "desc": "Handle common errors in maps",
-                    "xfile": "misc/error-handling.html"
-                },
-                {
-                    "title": "Edit SQL & Expressions",
-                    "desc": "Manually edit the SQL query and the Expressions viz",
-                    "file": "misc/edit-sql-expressions.html"
+                    "title": "World borders four colors",
+                    "desc": "World borders four color theorem",
+                    "file": "basics/world-kempe.html"
                 }
             ]
         }
