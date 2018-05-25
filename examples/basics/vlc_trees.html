@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Árboles Valencia | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <!-- Include CARTO VL JS -->
+  <script src="../../dist/carto-vl.js"></script>
+  <!-- Include Mapbox GL JS -->
+  <script src="../../vendor/mapbox-gl-dev.js"></script>
+  <!-- Include Mapbox GL CSS -->
+  <link href="../../vendor/mapbox-gl-dev.css" rel="stylesheet" />
+  <link href="../style.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <aside class="toolbox">
+    <div class="box">
+      <header>
+        <h1>Árboles Valencia</h1>
+      </header>
+      <section>
+        <p class="description open-sans"><a href="http://gobiernoabierto.valencia.es/">Open Data Ayuntamiento Valencia</a></p>
+      </section>
+      <footer class="js-footer"></footer>
+    </div>
+  </aside>
+  <div id="loader">
+    <div class="CDB-LoaderIcon CDB-LoaderIcon--big">
+      <svg class="CDB-LoaderIcon-spinner" viewBox="0 0 50 50">
+        <circle class="CDB-LoaderIcon-path" cx="25" cy="25" r="20" fill="none"></circle>
+      </svg>
+    </div>
+  </div>
+  <script>
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [-0.377483, 39.474697],
+      zoom: 14,
+      dragRotate: false
+    });
+
+    carto.setDefaultAuth({
+      user: 'aromeu',
+      apiKey: 'default_public'
+    });
+
+    const roadsSource = new carto.source.Dataset(`
+      ejes_calle
+    `);
+    const roadsViz = new carto.Viz(`
+      width: 1.5
+      color: #433b5d
+    `);
+    const roadsLayer = new carto.Layer('roads', roadsSource, roadsViz);
+
+    const blocksSource = new carto.source.Dataset(`
+      manzanas_pob
+    `);
+    const blocksViz = new carto.Viz(`
+      color: opacity(#706986, 0.2)
+    `);
+    const blocksLayer = new carto.Layer('blocks', blocksSource, blocksViz);
+
+    const treesSource = new carto.source.Dataset(`
+      arboles_valencia
+    `);
+    // color: opacity(ramp(linear(log(clusterAvg($grupo)), 0, 4), Geyser), clusterSum($grupo)*zoom()/100000*1.8*4)
+    const treesViz = new carto.Viz(`
+      color: ramp($grupo, Geyser)
+      width: zoom() / 10000
+      strokeWidth: 0
+      resolution: 0.25
+    `);
+    const treesLayer = new carto.Layer('trees', treesSource, treesViz);
+    treesLayer.on('loaded', hideLoader);
+
+    treesLayer.addTo(map, 'watername_ocean');
+    roadsLayer.addTo(map, 'trees');
+    blocksLayer.addTo(map, 'roads');
+
+    function hideLoader() {
+      document.getElementById('loader').style.opacity = '0';
+    }
+  </script>
+</body>
+</html>
+
