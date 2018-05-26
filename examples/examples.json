@@ -27,6 +27,21 @@
                     "file": "basics/world-kempe.html"
                 }
             ]
+        },
+        {
+            "title": "Points animation",
+            "samples": [
+                {
+                    "title": "Valencia Trees",
+                    "desc": "Valencia Trees",
+                    "file": "basics/vlc_trees.html"
+                },
+                {
+                    "title": "Valencia Trees isometric",
+                    "desc": "Valencia Trees isometric",
+                    "file": "basics/vlc_trees2.html"
+                }
+            ]
         }
     ]
 }
