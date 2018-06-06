@@ -216,6 +216,8 @@
         dragRotate: false
       });
 
+      const duration = 30;
+
       carto.setDefaultAuth({
         user: 'aromeu',
         apiKey: 'default_public'
@@ -369,23 +371,23 @@
       const qpfViz = new carto.Viz(`
         color: ramp($qpf, mint)
         width: $qpf * zoom() / 5
-        filter: and($qpf >= 1, torque($start_time, 10, fade(1, 3)))
+        filter: and($qpf >= 1, torque($start_time, ${duration}, fade(1, 3)))
       `);
 
       const qpfViz2 = new carto.Viz(`
         color: ramp($qpf, EMRLD)
         width: $qpf * zoom() / 10
-        filter: and($qpf <= 1, torque($start_time, 10, fade(1, 3)))
+        filter: and($qpf <= 1, torque($start_time, ${duration}, fade(1, 3)))
       `);
 
       const qpfPolyViz = new carto.Viz(`
         color: opacity(ramp($qpf, teal), 0.14)
         strokeWidth: 0
-        filter: torque($start_time, 10, fade(1, 3))
+        filter: torque($start_time, ${duration}, fade(1, 3))
       `);
 
       const s = carto.expressions;
-      const torque = s.torque(s.prop('start_time'), 10, s.fade(1, 3));
+      const torque = s.torque(s.prop('start_time'), duration, s.fade(1, 3));
       setInterval(function() {
         document.getElementById('date').textContent = new Date(parseInt(torque.getSimTime(), 10) * 1000).toString()
       }, 1000);
