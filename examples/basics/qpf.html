@@ -139,14 +139,14 @@
  // *  CB_GREYS, CB_PUOR, CB_BRBG, CB_PRGN, CB_PIYG, CB_RDBU, CB_RDGY, CB_RDYLBU, CB_SPECTRAL, CB_RDYLGN, CB_ACCENT,
  // *  CB_DARK2, CB_PAIRED, CB_PASTEL1, CB_PASTEL2, CB_SET1, CB_SET2, CB_SET3
     const qpfViz = new carto.Viz(`
-      color: ramp($qpf, TEALGRN)
+      color: ramp($qpf, MINT)
       width: $qpf * zoom() / 10
       resolution: 0.25
       filter: torque($cartodb_id, 2, fade(0.01, $qpf*2)) + 0.5
     `);
 
     const qpfPolyViz = new carto.Viz(`
-      color: opacity(ramp($qpf, TEALGRN), 0.05)
+      color: opacity(ramp($qpf, TEALGRN), 0.08)
       strokeColor: opacity(white, 0)
     `);
 
@@ -187,8 +187,8 @@
     // waterLayer.addTo(map, 'world');
     stateLayer.addTo(map, 'world');
     countiesLayer.addTo(map, 'world');
-    qpfPolyLayer.addTo(map, 'watername_ocean');
-    qpfLayer.addTo(map, 'qpfPoly');
+    qpfLayer.addTo(map, 'world');
+    qpfPolyLayer.addTo(map, 'qpf');
 
     function hideLoader() {
       document.getElementById('loader').style.opacity = '0';
