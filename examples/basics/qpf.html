@@ -80,8 +80,8 @@
     const map = new mapboxgl.Map({
       container: 'map',
       style: './style.json',
-      center: [-98.745117,39.317300],
-      zoom: 4,
+      center: [0, 0],
+      zoom: 3,
       dragRotate: false
     });
 
@@ -90,23 +90,35 @@
       apiKey: 'default_public'
     });
 
-    const worldSource = new carto.source.Dataset(`
-      world_borders_hd_1
+    const worldSource = new carto.source.SQL(`
+      SELECT cartodb_id,
+             the_geom,
+             st_transform(the_geom, 2163) AS the_geom_webmercator
+      FROM world_borders_hd_1
     `);
 
-    const waterSource = new carto.source.Dataset(`
-      detailed_water
+    const waterSource = new carto.source.SQL(`
+      SELECT cartodb_id,
+             the_geom,
+             st_transform(the_geom, 2163) AS the_geom_webmercator
+      FROM detailed_water
     `);
 
-    const stateSource = new carto.source.Dataset(`
-      state_county_merge
+    const stateSource = new carto.source.SQL(`
+      SELECT cartodb_id,
+             the_geom,
+             source_table,
+             st_transform(the_geom, 2163) AS the_geom_webmercator
+      FROM state_county_merge
     `);
 
-    const qpfPolySource = new carto.source.Dataset(`
-      table_97e0400
+    const qpfPolySource = new carto.source.SQL(`
+      SELECT cartodb_id,
+             the_geom,
+             qpf,
+             st_transform(the_geom, 2163) AS the_geom_webmercator
+      FROM table_94q0612
     `);
-
-
 
     const qpfSource = new carto.source.SQL(`
       WITH vertices AS
@@ -115,20 +127,29 @@
                 issue_time,
                 (ST_DumpPoints(the_geom)).path[1] AS v_id,
                                               (ST_DumpPoints(the_geom)).geom AS vertex
-         FROM table_97e0400 ),
+         FROM table_94q0612 ),
            rain AS
         ( SELECT cartodb_id,
                  qpf,
                  issue_time,
                  v_id,
-                 ST_SetSRID(ST_Translate(ST_Rotate(ST_MakeLine(ST_MakePoint(least(qpf, 0.5),0.0), ST_MakePoint(-least(qpf, 0.5),0.0)), radians(40)), ST_X(vertex), ST_Y(Vertex)), ST_SRID(vertex)) AS the_geom
+                 ST_SetSRID(
+                  ST_Translate(
+                    ST_Rotate(
+                      ST_MakeLine(
+                        ST_MakePoint(-least(qpf, 0.5),0.0),
+                        ST_MakePoint(least(qpf, 0.5),0.0)
+                      ), radians(60)
+                    ), ST_X(vertex), ST_Y(Vertex)
+                  ), ST_SRID(vertex)
+                ) AS the_geom
          FROM vertices)
       SELECT cartodb_id,
              qpf,
              issue_time,
              v_id,
              the_geom,
-             st_transform(the_geom, 3857) AS the_geom_webmercator
+             st_transform(the_geom, 2163) AS the_geom_webmercator
       FROM rain
     `);
     // color: opacity(ramp(linear(log(clusterAvg($grupo)), 0, 4), Geyser), clusterSum($grupo)*zoom()/100000*1.8*4)
@@ -139,15 +160,21 @@
  // *  CB_GREYS, CB_PUOR, CB_BRBG, CB_PRGN, CB_PIYG, CB_RDBU, CB_RDGY, CB_RDYLBU, CB_SPECTRAL, CB_RDYLGN, CB_ACCENT,
  // *  CB_DARK2, CB_PAIRED, CB_PASTEL1, CB_PASTEL2, CB_SET1, CB_SET2, CB_SET3
     const qpfViz = new carto.Viz(`
-      color: ramp($qpf, MINT)
-      width: $qpf * zoom() / 10
-      resolution: 0.25
-      filter: torque($cartodb_id, 2, fade(0.01, $qpf*2)) + 0.5
+      color: ramp($qpf, mint)
+      width: $qpf * zoom() / 15
+      filter: and($qpf > 1, torque(linear(-$qpf, -10, 0), 1, fade(0.1, $qpf*2)) + 0.5)
+    `);
+
+    const qpfViz2 = new carto.Viz(`
+      color: ramp($qpf, EMRLD)
+      width: $qpf * zoom() / 20
+      filter: and($qpf <= 1, torque(linear(-$qpf, -10, 0), 3, fade(1, 2)) + 0.5)
     `);
 
     const qpfPolyViz = new carto.Viz(`
-      color: opacity(ramp($qpf, TEALGRN), 0.08)
-      strokeColor: opacity(white, 0)
+      color: opacity(ramp($qpf, teal), 0.14)
+      strokeWidth: 0
+      filter: $qpf > 0.2
     `);
 
     const worldViz = new carto.Viz(`
@@ -156,15 +183,22 @@
     `);
 
     const stateViz = new carto.Viz(`
-       strokeWidth: 0.5;
-       strokeColor: opacity(#4c4c4c, 0.4);
+       strokeWidth: 1;
+       strokeColor: opacity(#4c4c4c, 0.8);
        color: opacity(#2b2b2b, 0.9)
        filter: and(zoom() < 6, $source_table == "states_50m")
     `);
 
+    const stateZoomViz = new carto.Viz(`
+       strokeWidth: 2;
+       strokeColor: opacity(#4c4c4c, 1);
+       color: opacity(#2b2b2b, 0.9)
+       filter: and(zoom() >= 6, $source_table == "states_50m")
+    `);
+
     const countiesViz = new carto.Viz(`
-       strokeWidth: 0.25;
-       strokeColor: opacity(#383838, 0.4);
+       strokeWidth: 1;
+       strokeColor: opacity(#383838, 0.6);
        color: opacity(#2b2b2b, 0.9)
        filter: and(zoom() >= 6, $source_table == "county_20m")
     `);
@@ -175,20 +209,24 @@
     `);
 
     const worldLayer = new carto.Layer('world', worldSource, worldViz);
-    const stateLayer = new carto.Layer('state', stateSource, stateViz);
     const countiesLayer = new carto.Layer('counties', stateSource, countiesViz);
+    const stateZoomLayer = new carto.Layer('stateZoom', stateSource, stateZoomViz);
+    const stateLayer = new carto.Layer('state', stateSource, stateViz);
     const waterLayer = new carto.Layer('water', waterSource, waterViz);
     const qpfPolyLayer = new carto.Layer('qpfPoly', qpfPolySource, qpfPolyViz);
     const qpfLayer = new carto.Layer('qpf', qpfSource, qpfViz);
+    const qpfLayer2 = new carto.Layer('qpf2', qpfSource, qpfViz2);
 
     qpfLayer.on('loaded', hideLoader);
 
-    worldLayer.addTo(map, 'watername_ocean');
-    // waterLayer.addTo(map, 'world');
-    stateLayer.addTo(map, 'world');
-    countiesLayer.addTo(map, 'world');
+    worldLayer.addTo(map, 'background');
+    waterLayer.addTo(map, 'world');
+    countiesLayer.addTo(map, 'water');
+    stateZoomLayer.addTo(map, 'counties');
+    stateLayer.addTo(map, 'counties');
     qpfLayer.addTo(map, 'world');
-    qpfPolyLayer.addTo(map, 'qpf');
+    qpfLayer2.addTo(map, 'qpf');
+    qpfPolyLayer.addTo(map, 'world');
 
     function hideLoader() {
       document.getElementById('loader').style.opacity = '0';
