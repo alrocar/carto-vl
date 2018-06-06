@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Quantitative Precipitation Forecasts | CARTO</title>
+  <title>US Precipitation Forecasts | CARTO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <!-- Include CARTO VL JS -->
@@ -61,7 +61,7 @@
   <aside class="toolbox">
     <div class="box">
       <header>
-        <h1>Quantitative Precipitation Forecasts</h1>
+        <h1>US Precipitation Forecasts</h1>
       </header>
       <section>
         <p class="description open-sans">A map that visualizes US Quantitative Precipitation Forecasts for today. Data taken from <a style={{color: 'white'}} href="http://ftp.hpc.ncep.noaa.gov/shapefiles/qpf/day1/" target="_blank">NOAA</a></p>
@@ -217,6 +217,7 @@
       });
 
       const duration = 30;
+      const fadeOut = 6;
 
       carto.setDefaultAuth({
         user: 'aromeu',
@@ -371,23 +372,23 @@
       const qpfViz = new carto.Viz(`
         color: ramp($qpf, mint)
         width: $qpf * zoom() / 5
-        filter: and($qpf >= 1, torque($start_time, ${duration}, fade(1, 3)))
+        filter: and($qpf >= 1, torque($start_time, ${duration}, fade(1, ${fadeOut})))
       `);
 
       const qpfViz2 = new carto.Viz(`
         color: ramp($qpf, EMRLD)
         width: $qpf * zoom() / 10
-        filter: and($qpf <= 1, torque($start_time, ${duration}, fade(1, 3)))
+        filter: and($qpf <= 1, torque($start_time, ${duration}, fade(1, ${fadeOut})))
       `);
 
       const qpfPolyViz = new carto.Viz(`
         color: opacity(ramp($qpf, teal), 0.14)
         strokeWidth: 0
-        filter: torque($start_time, ${duration}, fade(1, 3))
+        filter: torque($start_time, ${duration}, fade(1, ${fadeOut}))
       `);
 
       const s = carto.expressions;
-      const torque = s.torque(s.prop('start_time'), duration, s.fade(1, 3));
+      const torque = s.torque(s.prop('start_time'), duration, s.fade(1, fadeOut));
       setInterval(function() {
         document.getElementById('date').textContent = new Date(parseInt(torque.getSimTime(), 10) * 1000).toString()
       }, 1000);
