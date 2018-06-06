@@ -117,7 +117,7 @@
              the_geom,
              qpf,
              st_transform(the_geom, 2163) AS the_geom_webmercator
-      FROM table_94q0612
+      FROM table_97e0400
     `);
 
     const qpfSource = new carto.source.SQL(`
@@ -127,7 +127,7 @@
                 issue_time,
                 (ST_DumpPoints(the_geom)).path[1] AS v_id,
                                               (ST_DumpPoints(the_geom)).geom AS vertex
-         FROM table_94q0612 ),
+         FROM table_97e0400 ),
            rain AS
         ( SELECT cartodb_id,
                  qpf,
