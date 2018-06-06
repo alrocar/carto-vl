@@ -34,12 +34,22 @@
                 {
                     "title": "Valencia Trees",
                     "desc": "Valencia Trees",
-                    "file": "basics/vlc_trees.html"
+                    "file": "basics/vlc_trees2.html"
                 },
                 {
                     "title": "Valencia Trees isometric",
                     "desc": "Valencia Trees isometric",
-                    "file": "basics/vlc_trees2.html"
+                    "file": "basics/vlc_trees.html"
+                }
+            ]
+        },
+        {
+            "title": "SQL hacks",
+            "samples": [
+                {
+                    "title": "QPF NOAA",
+                    "desc": "QPF NOAA",
+                    "file": "basics/qpf.html"
                 }
             ]
         }
