@@ -346,7 +346,7 @@
                qpf,
                EXTRACT(EPOCH FROM to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS')) as start_time,
                v_id,
-               the_geom,
+               ST_StartPoint(the_geom) as the_geom,
                st_transform(ST_StartPoint(the_geom), 2163) AS the_geom_webmercator
         FROM rain ORDER BY start_time asc
       `);
@@ -372,13 +372,7 @@
       const qpfViz = new carto.Viz(`
         color: ramp($qpf, mint)
         width: $qpf * zoom() / 5
-        filter: and($qpf >= 1, torque($start_time, ${duration}, fade(1, ${fadeOut})))
-      `);
-
-      const qpfViz2 = new carto.Viz(`
-        color: ramp($qpf, EMRLD)
-        width: $qpf * zoom() / 10
-        filter: and($qpf <= 1, torque($start_time, ${duration}, fade(1, ${fadeOut})))
+        filter: and($qpf >= 0, torque($start_time, ${duration}, fade(1, ${fadeOut})))
       `);
 
       const qpfPolyViz = new carto.Viz(`
@@ -447,7 +441,6 @@
       const qpfPolyLayer = new carto.Layer('qpfPoly', qpfPolySource, qpfPolyViz);
       const qpfPointsLayer = new carto.Layer('qpfPoints', qpfPointsSource, qpfPointsViz);
       const qpfLayer = new carto.Layer('qpf', qpfSource, qpfViz);
-      const qpfLayer2 = new carto.Layer('qpf2', qpfSource, qpfViz2);
 
       qpfLayer.on('loaded', hideLoader);
 
@@ -457,7 +450,6 @@
       stateZoomLayer.addTo(map, 'counties');
       stateLayer.addTo(map, 'counties');
       qpfLayer.addTo(map, 'world');
-      qpfLayer2.addTo(map, 'qpf');
       qpfPointsLayer.addTo(map, 'world');
       qpfPolyLayer.addTo(map, 'world');
 
