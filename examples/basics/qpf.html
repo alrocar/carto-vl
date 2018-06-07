@@ -243,7 +243,15 @@
                the_geom,
                source_table,
                st_transform(the_geom, 2163) AS the_geom_webmercator
-        FROM state_county_merge
+        FROM state_county_merge where source_table = 'states_50m'
+      `);
+
+      const countiesSource = new carto.source.SQL(`
+        SELECT cartodb_id,
+               the_geom,
+               source_table,
+               st_transform(the_geom, 2163) AS the_geom_webmercator
+        FROM state_county_merge where source_table = 'county_20m'
       `);
 
       const qpfPolySource = new carto.source.SQL(`
@@ -434,7 +442,7 @@
       `);
 
       const worldLayer = new carto.Layer('world', worldSource, worldViz);
-      const countiesLayer = new carto.Layer('counties', stateSource, countiesViz);
+      const countiesLayer = new carto.Layer('counties', countiesSource, countiesViz);
       const stateZoomLayer = new carto.Layer('stateZoom', stateSource, stateZoomViz);
       const stateLayer = new carto.Layer('state', stateSource, stateViz);
       const waterLayer = new carto.Layer('water', waterSource, waterViz);
