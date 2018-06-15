@@ -50,6 +50,11 @@
                     "title": "QPF NOAA",
                     "desc": "QPF NOAA",
                     "file": "basics/qpf.html"
+                },
+                {
+                    "title": "Walmart expansion",
+                    "desc": "Walmart expansion",
+                    "file": "basics/walmart.html"
                 }
             ]
         }
