@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <!-- Include CARTO VL JS -->
-  <script src="../../dist/carto-vl.min.js"></script>
+  <script src="../../dist/carto-vl.js"></script>
   <!-- Include Mapbox GL JS -->
   <script src="../../vendor/mapbox-gl-dev.js"></script>
   <!-- Include Mapbox GL CSS -->
@@ -59,12 +59,12 @@
     </svg>
   </a>
   <script>
-    const duration = 20;
+    const duration = 5;
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
       center: [-73.9712, 40.7737],
-      zoom: 12,
+      zoom: 10,
       dragRotate: false
     });
 
@@ -73,27 +73,23 @@
       apiKey: 'default_public'
     });
 
-    const linesSource = new carto.source.Dataset(`
-      mnmappluto_1_lines
+    const polySource = new carto.source.SQL(`
+      select * from nycpluto_all_copy
     `);
-    const linesViz = new carto.Viz(`
-      width: 1/2/2
-      color: ramp(buckets($color, 1, 2, 3, 4, 5, 6), Bold)
-      filter: torque(linear($ord, 0 , 42890), ${duration}, fade(0.1,0.5))
-    `);
-    const linesLayer = new carto.Layer('linesLayer', linesSource, linesViz);
 
-    const polySource = new carto.source.Dataset(`
-      mnmappluto_1_polys
-    `);
-    const polyViz = new carto.Viz(`
-      color: ramp(buckets($color, 1, 2, 3, 4, 5, 6), Bold)
-      filter: torque(linear($ord, 0, 42890), ${duration}, fade(0,120))
-    `);
+    const s = carto.expressions;
+
+    const polyViz = new carto.Viz({
+      color: s.ramp(s.globalQuantiles(s.prop('yearbuilt'), 7), s.palettes.SUNSETDARK),
+      width: 2,
+      strokeWidth: 0,
+      filter: s.torque(s.prop('distance'), duration, s.fade(0.3, 0.7))
+      // filter: s.torque(s.linear(s.prop('yearbuilt'), 1661, 2014), duration, s.fade(1, 120))
+    });
+
     const polyLayer = new carto.Layer('polyLayer', polySource, polyViz);
 
-    linesLayer.addTo(map, 'watername_ocean');
-    polyLayer.addTo(map, 'linesLayer');
+    polyLayer.addTo(map, 'watername_ocean');
   </script>
 </body>
 </html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Four color theorem | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <!-- Include CARTO VL JS -->
+  <script src="../../dist/carto-vl.js"></script>
+  <!-- Include Mapbox GL JS -->
+  <script src="../../vendor/mapbox-gl-dev.js"></script>
+  <!-- Include Mapbox GL CSS -->
+  <link href="../../vendor/mapbox-gl-dev.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    const duration = 1;
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      center: [0, 0],
+      zoom: 4,
+      dragRotate: false
+    });
+
+    carto.setDefaultAuth({
+      user: 'aromeu',
+      apiKey: 'default_public'
+    });
+
+    const linesSource = new carto.source.SQL(`
+      select * from logo_solid_carto_copy where group_1 = 2
+    `);
+
+    const lines2Source = new carto.source.SQL(`
+      WITH vertices AS
+          (SELECT cartodb_id,
+                  group_1,
+                  (ST_DumpPoints(the_geom)).path[1] AS v_id,
+                                                (ST_DumpPoints(the_geom)).geom AS vertex
+           FROM logo_solid_carto_copy ),
+             rain AS
+          ( SELECT cartodb_id,
+                   group_1,
+                   v_id,
+                   ST_SetSRID(
+                    ST_Translate(
+                      ST_Rotate(
+                        ST_MakeLine(
+                          ST_MakePoint(-least(0, 0.5),0.0),
+                          ST_MakePoint(least(0, 0.5),0.0)
+                        ), radians(0)
+                      ), ST_X(vertex), ST_Y(Vertex)
+                    ), ST_SRID(vertex)
+                  ) AS the_geom
+           FROM vertices)
+        SELECT cartodb_id,
+               group_1,
+               v_id,
+               ST_StartPoint(the_geom) as the_geom,
+               st_transform(ST_StartPoint(the_geom), 3857) AS the_geom_webmercator
+        FROM rain
+    `);
+
+
+    const linesViz = new carto.Viz(`
+      width: 3
+      color: #ff0000
+      filter: torque(linear($cartodb_id, 0 , 1530), ${duration}, fade(0.1, 0.1))
+    `);
+    const linesLayer = new carto.Layer('linesLayer', linesSource, linesViz);
+
+    const lines2Viz = new carto.Viz(`
+      width: 10
+      color: #00ff00
+      filter: torque(linear($group_1, 0 , 8), ${duration}, fade(0.1, 31)) + 0.05
+    `);
+    const lines2Layer = new carto.Layer('lines2Layer', lines2Source, lines2Viz);
+
+    linesLayer.addTo(map, 'watername_ocean');
+    lines2Layer.addTo(map, 'linesLayer');
+  </script>
+</body>
+</html>
+
