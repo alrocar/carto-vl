@@ -60,7 +60,7 @@
         },
         {
             "title": "Franchise",
-            "samples": [{"title": "NYC trees", "desc": "NYC trees", "file": "basics/franchise-cartovl.html"}, {"title": "Polygon split", "desc": "Polygon split", "file": "basics/polygon-split.html"}]
+            "samples": [{"title": "NYC trees", "desc": "NYC trees", "file": "basics/franchise-cartovl.html"}, {"title": "Polygon split", "desc": "Polygon split", "file": "basics/polygon_split.html"}]
         }
     ]
 }
