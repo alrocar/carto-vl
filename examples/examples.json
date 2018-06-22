@@ -57,6 +57,10 @@
                     "file": "basics/walmart.html"
                 }
             ]
+        },
+        {
+            "title": "Franchise",
+            "samples": [{"title": "NYC trees", "desc": "NYC trees", "file": "basics/franchise-cartovl.html"}]
         }
     ]
 }
