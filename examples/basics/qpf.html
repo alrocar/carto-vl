@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <!-- Include CARTO VL JS -->
-  <script src="../../dist/carto-vl.js"></script>
+  <script src="../../dist/carto-vl.min.js"></script>
   <!-- Include Mapbox GL JS -->
   <script src="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.js"></script>
   <!-- Include Mapbox GL CSS -->
@@ -352,7 +352,7 @@
            FROM vertices)
         SELECT cartodb_id,
                qpf,
-               EXTRACT(EPOCH FROM to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS')) as start_time,
+               to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS') as start_time,
                v_id,
                ST_StartPoint(the_geom) as the_geom,
                st_transform(ST_StartPoint(the_geom), 2163) AS the_geom_webmercator
@@ -392,7 +392,7 @@
       const s = carto.expressions;
       const torque = s.torque(s.prop('start_time'), duration, s.fade(1, fadeOut));
       setInterval(function() {
-        document.getElementById('date').textContent = new Date(parseInt(torque.getSimTime(), 10) * 1000).toString()
+        document.getElementById('date').textContent = torque.getSimTime()
       }, 1000);
       const viz = new carto.Viz({
         color: s.opacity(s.ramp(s.prop('qpf'), s.palettes.TEAL), 1),
