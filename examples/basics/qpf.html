@@ -256,15 +256,15 @@
 
       const qpfPolySource = new carto.source.SQL(`
        WITH rain_pred as (
-        SELECT * FROM table_91e0606
+        SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_91e0606
         UNION ALL
-        SELECT * FROM table_92e0612
+        SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_92e0612
         UNION ALL
-        SELECT * FROM table_93e0612
+        SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_93e0612
         UNION ALL
-        SELECT * FROM table_9ee0612
+        SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_9ee0612
         UNION ALL
-        SELECT * FROM table_9fe0612)
+        SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_9fe0612)
        SELECT cartodb_id,
                the_geom,
                qpf,
@@ -275,15 +275,15 @@
 
       const qpfSource = new carto.source.SQL(`
         WITH rain_pred as (
-          SELECT * FROM table_91e0606
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_91e0606
           UNION ALL
-          SELECT * FROM table_92e0612
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_92e0612
           UNION ALL
-          SELECT * FROM table_93e0612
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_93e0612
           UNION ALL
-          SELECT * FROM table_9ee0612
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_9ee0612
           UNION ALL
-          SELECT * FROM table_9fe0612),
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_9fe0612),
         vertices AS
           (SELECT cartodb_id,
                   qpf,
@@ -318,15 +318,15 @@
 
       const qpfPointsSource = new carto.source.SQL(`
         WITH rain_pred as (
-          SELECT * FROM table_91e0606
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_91e0606
           UNION ALL
-          SELECT * FROM table_92e0612
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_92e0612
           UNION ALL
-          SELECT * FROM table_93e0612
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_93e0612
           UNION ALL
-          SELECT * FROM table_9ee0612
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_9ee0612
           UNION ALL
-          SELECT * FROM table_9fe0612),
+          SELECT cartodb_id, the_geom, the_geom_webmercator, id::float, qpf::float, product, valid_time, units, issue_time, start_time, end_time FROM table_9fe0612),
         vertices AS
           (SELECT cartodb_id,
                   qpf,
