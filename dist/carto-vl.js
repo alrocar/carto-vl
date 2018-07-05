@@ -13462,8 +13462,6 @@ class Windshaft {
                 return 'point';
             case 'ST_MultiLineString':
                 return 'line';
-            case 'ST_LineString':
-                return 'line';
             default:
                 throw new Error(`Unimplemented geometry type ''${type}'`);
         }
