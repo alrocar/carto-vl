@@ -222,7 +222,7 @@ FROM state_points`,
         center: [0, 0],
         zoom: 1,
         dragRotate: false,
-        maxZoom: 6
+        maxZoom: 7
       });
 
       const duration = 40;
@@ -263,8 +263,12 @@ FROM state_points`,
         SELECT c.cartodb_id, st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857) as the_geom_webmercator, c.the_geom FROM aromeu.cemetery AS c, state_county_merge as a WHERE st_contains(a.the_geom, c.the_geom) and a.name != 'Alaska' and a.name != 'Hawaii'
       `);
 
+      // st_distance(c.the_geom, st_setsrid(st_makepoint(12.604658145390433,-0.5247688293457032), 4326)) as dist,
+
       const cemeteriesAnimSource = new carto.source.SQL(`
-        SELECT c.cartodb_id, st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857) as the_geom_webmercator, st_x(st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857)) as lon, c.the_geom FROM aromeu.cemetery AS c, state_county_merge as a WHERE st_contains(a.the_geom, c.the_geom) and a.name != 'Alaska' and a.name != 'Hawaii'
+        SELECT c.cartodb_id, st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857) as the_geom_webmercator, st_x(c.the_geom) as lon,
+          anim,
+        c.the_geom FROM aromeu.cemetery AS c, state_county_merge as a WHERE st_contains(a.the_geom, c.the_geom) and a.name != 'Alaska' and a.name != 'Hawaii'
       `);
 
       const cemeteriesShiftSource = new carto.source.SQL(`
@@ -318,21 +322,31 @@ FROM state_points`,
       const cemeteriesViz = new carto.Viz(`
          width: sqrt(clusterCount())
          strokeWidth: 0
-         color: opacity(ramp(linear(clusterCount(), 0, 100), reverse(PurpOr)), 0.3)
+         color: opacity(ramp(linear(clusterCount(), 0, 100), reverse(OrYel)), 0.3)
+         resolution: 1.5
       `);
 
       const cemeteriesAnimViz = new carto.Viz(`
-         width: 3
+         width: sqrt(clusterCount())
          strokeWidth: 0
-         color: opacity(ramp(linear(clusterCount(), 0, 100), PurpOr), 0.01)
-         filter: animation($lon, 5, fade(1.5,5))
+         color: opacity(ramp(linear(clusterCount(), 0, 100), OrYel), 0.1)
+         filter: animation($anim, 2, fade(0., 1.8))^10
       `);
+
+      const cemeteriesAnim2Viz = new carto.Viz(`
+         width: sqrt(clusterCount())
+         strokeWidth: 0
+         color: opacity(ramp(linear(clusterCount(), 0, 100), OrYel), 0.1)
+         filter: animation($lon, 2, fade(0., 1.8))^10
+      `);
+
+      //filter: animation($lon, 5, fade(1.5,5))
 
       const cemeteriesShiftViz = new carto.Viz(`
          width: 3
 
          strokeWidth: 0
-         color: opacity(#881ee4, 0.3)
+         color: opacity(#ff9a00, 0.3)
       `);
 
       const countiesLayer = new carto.Layer('counties', countiesSource, countiesViz);
@@ -341,9 +355,10 @@ FROM state_points`,
       const cemeteriesLayer = new carto.Layer('cemeteries', cemeteriesSource, cemeteriesViz);
       const cemeteriesShiftLayer = new carto.Layer('cemeteriesShift', cemeteriesShiftSource, cemeteriesShiftViz);
       const cemeteriesAnimLayer = new carto.Layer('cemeteriesAnim', cemeteriesAnimSource, cemeteriesAnimViz);
+      const cemeteriesAnim2Layer = new carto.Layer('cemeteriesAnim2', cemeteriesAnimSource, cemeteriesAnim2Viz);
 
 
-      stateLayer.on('loaded', hideLoader);
+      cemeteriesAnim2Layer.on('loaded', hideLoader);
 
       countiesLayer.addTo(map, 'background');
       stateZoomLayer.addTo(map, 'counties');
@@ -351,6 +366,7 @@ FROM state_points`,
       cemeteriesLayer.addTo(map, 'background');
       cemeteriesShiftLayer.addTo(map, 'background');
       cemeteriesAnimLayer.addTo(map, 'background');
+      cemeteriesAnim2Layer.addTo(map, 'background');
 
       function hideLoader() {
         map.flyTo({
