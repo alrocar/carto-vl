@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>US Cemeteries | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <!-- Include CARTO VL JS -->
+  <script src="https://libs.cartocdn.com/carto-vl/v0.9.1/carto-vl.min.js"></script>
+  <!-- Include Mapbox GL JS -->
+  <script src="https://libs.cartocdn.com/mapbox-gl/v0.48.0-carto1/mapbox-gl.js"></script>
+  <!-- Include Mapbox GL CSS -->
+  <link href="https://libs.cartocdn.com/mapbox-gl/v0.48.0-carto1/mapbox-gl.css" rel="stylesheet" />
+  <link href="../style.css" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #map {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+    .CDB-Logo {
+        -webkit-transform: translateX(-50%);
+        -khtml-transform: translateX(-50%);
+        -moz-transform: translateX(-50%);
+        -ms-transform: translateX(-50%);
+        -o-transform: translateX(-50%);
+        transform: translateX(-50%);
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: auto;
+        height: auto;
+        z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <a class="CDB-Logo" href="https://carto.com" target="_blank">
+    <svg width="68px" height="28px" viewBox="2 33 68 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="cartoLogo-Blur">
+                <feOffset dx="0" dy="1" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+                <feGaussianBlur stdDeviation="0.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+                <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.25 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+                <feMerge>
+                    <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                    <feMergeNode in="SourceGraphic"></feMergeNode>
+                </feMerge>
+            </filter>
+        </defs>
+        <g filter="url(#cartoLogo-Blur)" fill="none" fill-rule="evenodd" transform="translate(3, 33)">
+            <circle cx="52.5" cy="12.5" r="12.5" id="halo" fill-opacity="0.3" fill="#ffffff"></circle>
+            <path id="halo-path" d="M4.56199178,16.7836993 C6.33902821,16.7836993 7.36601679,15.9967983 8.12760383,14.9280222 L6.44288099,13.7065639 C5.95823469,14.3055483 5.46204919,14.7048712 4.61968777,14.7048712 C3.48884641,14.7048712 2.69264178,13.7417983 2.69264178,12.5085951 L2.69264178,12.4851056 C2.69264178,11.2871368 3.48884641,10.3005743 4.61968777,10.3005743 C5.39281401,10.3005743 5.9236171,10.6881524 6.385185,11.2636472 L8.06990784,9.93648577 C7.35447759,8.93817848 6.29287142,8.23349098 4.64276617,8.23349098 C2.19645628,8.23349098 0.396341463,10.1126576 0.396341463,12.5085951 L0.396341463,12.5320847 C0.396341463,14.9867462 2.25415227,16.7836993 4.56199178,16.7836993 L4.56199178,16.7836993 Z M11.9673421,16.6192722 L14.3097992,16.6192722 L14.8867591,15.1394285 L18.0138817,15.1394285 L18.5908415,16.6192722 L20.9909946,16.6192722 L17.5523137,8.33919411 L15.3944838,8.33919411 L11.9673421,16.6192722 Z M15.5444934,13.3659649 L16.45609,11.0404962 L17.3561474,13.3659649 L15.5444934,13.3659649 Z M25.3499968,16.6192722 L27.5886011,16.6192722 L27.5886011,14.1293764 L28.5809721,14.1293764 L30.207999,16.6192722 L32.78124,16.6192722 L30.854194,13.7535431 C31.8581042,13.3189858 32.5158385,12.4851056 32.5158385,11.2166681 L32.5158385,11.1931785 C32.5158385,10.3827879 32.2735154,9.7603139 31.8004082,9.27877744 C31.258066,8.72677223 30.4041653,8.39791807 29.1694712,8.39791807 L25.3499968,8.39791807 L25.3499968,16.6192722 Z M27.5886011,12.3441681 L27.5886011,10.3592983 L29.0656184,10.3592983 C29.8041271,10.3592983 30.2772342,10.6881524 30.2772342,11.3458608 L30.2772342,11.3693504 C30.2772342,11.9683347 29.8272055,12.3441681 29.0771576,12.3441681 L27.5886011,12.3441681 Z M39.1942194,16.6192722 L41.4328237,16.6192722 L41.4328237,10.3945326 L43.8560552,10.3945326 L43.8560552,8.39791807 L36.7825271,8.39791807 L36.7825271,10.3945326 L39.1942194,10.3945326 L39.1942194,16.6192722 Z M52.4193803,16.7708268 C54.7933139,16.7708268 56.7177673,14.8587096 56.7177673,12.4999935 C56.7177673,10.1412775 54.7933139,8.22916031 52.4193803,8.22916031 C50.0454467,8.22916031 48.1209933,10.1412775 48.1209933,12.4999935 C48.1209933,14.8587096 50.0454467,16.7708268 52.4193803,16.7708268 Z" fill="#ffffff"></path>
+        </g>
+    </svg>
+  </a>
+  <aside class="toolbox">
+    <div class="box">
+      <header>
+        <h1 style="color: #ff9a00">US Cemeteries</h1>
+      </header>
+      <section>
+        <p class="description open-sans">A map that visualizes ~93 thousand cemeteries locations in the US.</p>
+        <p class="description open-sans">© <a href="https://openstreetmap.org" style="color: #ff9a00" target="_blank">Openstreetmap</a> contributors</p>
+      </section>
+      <footer class="js-footer"></footer>
+    </div>
+  </aside>
+  <div id="loader">
+    <div class="CDB-LoaderIcon CDB-LoaderIcon--big">
+      <svg class="CDB-LoaderIcon-spinner" viewBox="0 0 50 50">
+        <circle class="CDB-LoaderIcon-path" cx="25" cy="25" r="20" fill="none"></circle>
+      </svg>
+    </div>
+  </div>
+  <script>
+    var username = "aromeu",
+    sql = `SELECT CASE
+           WHEN postal != 'AK'
+                AND postal != 'HI' THEN ST_Transform(the_geom_webmercator,42303)
+           WHEN postal = 'AK' THEN ST_Rotate(ST_Scale(ST_Transform(ST_Translate(the_geom,90,-53) ,3857) , 0.3 , 0.5),0.2)
+           WHEN postal = 'HI' THEN ST_Scale(ST_Transform(ST_Translate(the_geom,55,3) ,42303) , 1.5 , 1.5)
+       END the_geom_webmercator ,
+       cartodb_id,
+       postal, name_1
+FROM state_points`,
+    url = `https://${username}.carto.com/api/v1/map`,
+    mapconfig = {
+      layers: [
+        {
+          type: "cartodb",
+          options: { sql: sql }
+        }
+      ]
+    },
+    simple_style = {
+        version: 8,
+        "sprite": "https://tiles.basemaps.cartocdn.com/gl/positron-gl-style/sprite",
+        "glyphs": "https://tiles.basemaps.cartocdn.com/fonts/{fontstack}/{range}.pbf",
+        sources: {
+          tilejson: {
+            type: "vector",
+            tiles: null // we don't know this data yet :-)
+          }
+        },
+        layers: [
+          {
+            "id": "background",
+            "type": "background",
+            "layout": {
+                "visibility": "visible"
+            },
+            "paint": {
+                "background-color": "#3B3B3B",
+                "background-opacity": 1
+            }
+          },
+          {
+            id: "layer2",
+            type: "symbol",
+            source: "tilejson",
+            "source-layer": "layer0",
+            "maxzoom": 4,
+            "layout": {
+                "text-field": "{postal}",
+                "text-font": [
+                    "Montserrat Medium",
+                    "Open Sans Bold",
+                    "Noto Sans Regular",
+                    "HanWangHeiLight Regular",
+                    "NanumBarunGothic Regular"
+                ],
+                "text-size": 12,
+                "icon-image": "circle-11",
+                "icon-offset": [
+                    16,
+                    5
+                ],
+                "text-anchor": "right",
+                "icon-size": 0,
+                "text-max-width": 8,
+                "text-keep-upright": true,
+                "text-offset": [
+                    0.2,
+                    0.2
+                ],
+                "text-transform": "uppercase"
+            },
+            "paint": {
+                "text-color": "#666",
+                "icon-color": "#666",
+                "icon-translate-anchor": "map",
+                "text-halo-color": "#222",
+                "text-halo-width": 1
+            }
+          },
+          {
+            id: "layer3",
+            type: "symbol",
+            source: "tilejson",
+            "source-layer": "layer0",
+            "minzoom": 4,
+            "layout": {
+                "text-field": "{name_1}",
+                "text-font": [
+                    "Montserrat Medium",
+                    "Open Sans Bold",
+                    "Noto Sans Regular",
+                    "HanWangHeiLight Regular",
+                    "NanumBarunGothic Regular"
+                ],
+                "text-size": 12,
+                "icon-image": "circle-11",
+                "icon-offset": [
+                    16,
+                    5
+                ],
+                "text-anchor": "right",
+                "icon-size": 0,
+                "text-max-width": 8,
+                "text-keep-upright": true,
+                "text-offset": [
+                    0.2,
+                    0.2
+                ],
+                "text-transform": "uppercase"
+            },
+            "paint": {
+                "text-color": "#666",
+                "icon-color": "#666",
+                "icon-translate-anchor": "map",
+                "text-halo-color": "#222",
+                "text-halo-width": 1
+            }
+          }
+        ]
+      };
+
+
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(mapconfig),
+      headers: new Headers({
+        "Content-Type": "application/json"
+      })
+    })
+    .then(res => res.json())
+    .catch(error => console.error("Error:", error))
+    .then(function(response) {
+      simple_style.sources.tilejson.tiles = response.metadata.tilejson.vector.tiles;
+      loadMap(simple_style);
+    });
+
+    function loadMap(style) {
+      const map = new mapboxgl.Map({
+        container: 'map',
+        'style': style,
+        center: [0, 0],
+        zoom: 1,
+        dragRotate: false,
+        maxZoom: 6
+      });
+
+      const duration = 40;
+      const fadeOut = 12;
+
+      carto.setDefaultAuth({
+        user: 'aromeu',
+        apiKey: 'default_public'
+      });
+
+      const stateSource = new carto.source.SQL(`
+        SELECT CASE
+           WHEN name != 'Alaska'
+                AND name != 'Hawaii' THEN ST_Transform(the_geom_webmercator,42303)
+           WHEN name = 'Alaska' THEN ST_Rotate(ST_Scale(ST_Transform(ST_Translate(the_geom,90,-53) ,3857) , 0.3 , 0.5),0.2)
+           WHEN name = 'Hawaii' THEN ST_Scale(ST_Transform(ST_Translate(the_geom,55,3) ,42303) , 1.5 , 1.5)
+       END the_geom_webmercator,
+       cartodb_id,
+       source_table,
+       the_geom
+        FROM state_county_merge where source_table = 'states_50m'
+      `);
+
+      const countiesSource = new carto.source.SQL(`
+        SELECT CASE
+           WHEN name != 'Alaska'
+                AND name != 'Hawaii' THEN ST_Transform(the_geom_webmercator,42303)
+           WHEN name = 'Alaska' THEN ST_Rotate(ST_Scale(ST_Transform(ST_Translate(the_geom,90,-53) ,3857) , 0.3 , 0.5),0.2)
+           WHEN name = 'Hawaii' THEN ST_Scale(ST_Transform(ST_Translate(the_geom,55,3) ,42303) , 1.5 , 1.5)
+       END the_geom_webmercator,
+       cartodb_id,
+       source_table,
+       the_geom
+        FROM state_county_merge where source_table = 'county_20m'
+      `);
+
+      const cemeteriesSource = new carto.source.SQL(`
+        SELECT c.cartodb_id, st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857) as the_geom_webmercator, c.the_geom FROM aromeu.cemetery AS c, state_county_merge as a WHERE st_contains(a.the_geom, c.the_geom) and a.name != 'Alaska' and a.name != 'Hawaii'
+      `);
+
+      const cemeteriesAnimSource = new carto.source.SQL(`
+        SELECT c.cartodb_id, st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857) as the_geom_webmercator, st_x(st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857)) as lon, c.the_geom FROM aromeu.cemetery AS c, state_county_merge as a WHERE st_contains(a.the_geom, c.the_geom) and a.name != 'Alaska' and a.name != 'Hawaii'
+      `);
+
+      const cemeteriesShiftSource = new carto.source.SQL(`
+        SELECT 1 as cartodb_id,
+           ST_Rotate(ST_Scale(
+            ST_Transform(
+              ST_Translate(
+                c.the_geom,90,-53
+              )
+              ,3857
+            )
+          , 0.3
+          , 0.5
+        ),0.2) as the_geom_webmercator, c.the_geom FROM cemetery AS c, state_county_merge where ST_Contains(state_county_merge.the_geom, c.the_geom) AND state_county_merge.name = 'Alaska'
+        UNION ALL
+        SELECT 2 as cartodb_id,
+          ST_Scale(
+              ST_Transform(
+                ST_Translate(
+                  c.the_geom,55,3
+                )
+                ,42303
+              )
+            , 1.5
+            , 1.5
+          )
+          AS the_geom_webmercator, c.the_geom
+          FROM cemetery AS c, state_county_merge where ST_Contains(state_county_merge.the_geom, c.the_geom) AND state_county_merge.name = 'Hawaii'`);
+
+      const stateViz = new carto.Viz(`
+         strokeWidth: 1
+         strokeColor: opacity(#4c4c4c, 0.8)
+         color: opacity(#2b2b2b, 0.9)
+         filter: and(zoom() < 6, $source_table == "states_50m")
+      `);
+
+      const stateZoomViz = new carto.Viz(`
+         strokeWidth: 2
+         strokeColor: opacity(#4c4c4c, 1)
+         color: opacity(#2b2b2b, 0.9)
+         filter: and(zoom() >= 6, $source_table == "states_50m")
+      `);
+
+      const countiesViz = new carto.Viz(`
+         strokeWidth: 1
+         strokeColor: opacity(#383838, 0.6)
+         color: opacity(#2b2b2b, 0.9)
+         filter: and(zoom() >= 6, $source_table == "county_20m")
+      `);
+
+      const cemeteriesViz = new carto.Viz(`
+         width: sqrt(clusterCount())
+         strokeWidth: 0
+         color: opacity(ramp(linear(clusterCount(), 0, 100), reverse(PurpOr)), 0.3)
+      `);
+
+      const cemeteriesAnimViz = new carto.Viz(`
+         width: 3
+         strokeWidth: 0
+         color: opacity(ramp(linear(clusterCount(), 0, 100), PurpOr), 0.01)
+         filter: animation($lon, 5, fade(1.5,5))
+      `);
+
+      const cemeteriesShiftViz = new carto.Viz(`
+         width: 3
+
+         strokeWidth: 0
+         color: opacity(#881ee4, 0.3)
+      `);
+
+      const countiesLayer = new carto.Layer('counties', countiesSource, countiesViz);
+      const stateZoomLayer = new carto.Layer('stateZoom', stateSource, stateZoomViz);
+      const stateLayer = new carto.Layer('state', stateSource, stateViz);
+      const cemeteriesLayer = new carto.Layer('cemeteries', cemeteriesSource, cemeteriesViz);
+      const cemeteriesShiftLayer = new carto.Layer('cemeteriesShift', cemeteriesShiftSource, cemeteriesShiftViz);
+      const cemeteriesAnimLayer = new carto.Layer('cemeteriesAnim', cemeteriesAnimSource, cemeteriesAnimViz);
+
+
+      stateLayer.on('loaded', hideLoader);
+
+      countiesLayer.addTo(map, 'background');
+      stateZoomLayer.addTo(map, 'counties');
+      stateLayer.addTo(map, 'background');
+      cemeteriesLayer.addTo(map, 'background');
+      cemeteriesShiftLayer.addTo(map, 'background');
+      cemeteriesAnimLayer.addTo(map, 'background');
+
+      function hideLoader() {
+        map.flyTo({
+          center: [0, 15],
+          zoom: 4,
+          speed: 1,
+          curve: 1,
+          easing(t) {
+            return t;
+          }
+        });
+        document.getElementById('loader').style.opacity = '0';
+      }
+
+    }
+  </script>
+</body>
+</html>
+
