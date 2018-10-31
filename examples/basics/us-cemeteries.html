@@ -265,6 +265,7 @@ FROM state_points`,
 
       // st_distance(c.the_geom, st_setsrid(st_makepoint(12.604658145390433,-0.5247688293457032), 4326)) as dist,
 
+      // anim -> 5 * st_x(c.the_geom) * cos(st_x(c.the_geom) + (pi() * (10::integer % c.cartodb_id::integer))) + (random() * 2),
       const cemeteriesAnimSource = new carto.source.SQL(`
         SELECT c.cartodb_id, st_setsrid(st_transform(c.the_geom_webmercator, 42303), 3857) as the_geom_webmercator, st_x(c.the_geom) as lon,
           anim,
