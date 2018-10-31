@@ -219,8 +219,8 @@ FROM state_points`,
       const map = new mapboxgl.Map({
         container: 'map',
         'style': style,
-        center: [0, 0],
-        zoom: 1,
+        center: [0, 15],
+        zoom: 4,
         dragRotate: false,
         maxZoom: 7
       });
@@ -369,15 +369,6 @@ FROM state_points`,
       cemeteriesAnim2Layer.addTo(map, 'background');
 
       function hideLoader() {
-        map.flyTo({
-          center: [0, 15],
-          zoom: 4,
-          speed: 1,
-          curve: 1,
-          easing(t) {
-            return t;
-          }
-        });
         document.getElementById('loader').style.opacity = '0';
       }
 
