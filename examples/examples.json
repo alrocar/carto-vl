@@ -40,6 +40,11 @@
                     "title": "Valencia Trees isometric",
                     "desc": "Valencia Trees isometric",
                     "file": "basics/vlc_trees.html"
+                },
+                {
+                    "title": "US cemeteries",
+                    "desc": "US cemeteries",
+                    "file": "basics/us-cemeteries.html"
                 }
             ]
         },
@@ -55,6 +60,11 @@
                     "title": "Walmart expansion",
                     "desc": "Walmart expansion",
                     "file": "basics/walmart.html"
+                },
+                {
+                    "title": "Catastro Madrid",
+                    "desc": "Catastro Madrid",
+                    "file": "basics/catastromad.html"
                 }
             ]
         },
