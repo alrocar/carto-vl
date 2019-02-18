@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Color schemes | CARTO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <script src="../../dist/carto-vl.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="../style.css">
+</head>
+
+<body>
+  <div id="map"></div>
+    <aside class="toolbox">
+      <div class="box">
+        <header>
+          <h1>Color schemes</h1>
+        </header>
+        <section>
+          <p class="description open-sans">Supported color schemes</p>
+          <div id="controls">
+            <ul>
+              <li>
+                <input type="radio" name="style" onclick="setCartoColor()" id="Cartocolor" checked>
+                <label for="Cartocolor"><a href="https://carto.com/carto-colors/" title="CARTOColors" target="_blank">CARTOColors</a></label>
+              </li>
+              <li>
+                  <input type="radio" name="style" onclick="setCartoColorReverse()" id="CartocolorReverse">
+                  <label for="CartocolorReverse">CARTOColors (reversed)</label>
+              </li>
+              <li>
+                  <input type="radio" name="style" onclick="setColorBrewer()" id="Colorbrewer">
+                  <label for="Colorbrewer"><a href="http://colorbrewer2.org/#type=sequential&scheme=YlGn&n=5" title="Colorbrewer" target="_blank">ColorBrewer</a></label>
+              </li>
+              <li>
+                  <input type="radio" name="style" onclick="setColorBrewerReverse()" id="ColorbrewerReverse">
+                  <label for="ColorbrewerReverse">ColorBrewer (reversed)</label>
+              </li>
+              <li>
+                <input type="radio" name="style" onclick="setCustomColors()" id="CustomColors">
+                <label for="CustomColors">Custom colors</label>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <footer class="js-footer"></footer>
+      </div>
+    </aside>
+    <div id="loader">
+      <div class="CDB-LoaderIcon CDB-LoaderIcon--big">
+        <svg class="CDB-LoaderIcon-spinner" viewBox="0 0 50 50">
+          <circle class="CDB-LoaderIcon-path" cx="25" cy="25" r="20" fill="none"></circle>
+        </svg>
+      </div>
+    </div>
+  <script>
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: carto.basemaps.darkmatter,
+      center: [-100.3710, 38.4793],
+      zoom: 3.5,
+      scrollZoom: false,
+    });
+
+    const nav = new mapboxgl.NavigationControl({
+      showCompass: false
+    });
+    map.addControl(nav, 'top-left');
+
+    carto.setDefaultAuth({
+      username: 'cartovl',
+      apiKey: 'default_public'
+    });
+
+    // Color with CARTOColor scheme
+    const CartoColorViz = new carto.Viz(`
+      color: ramp(globalQuantiles($pct_higher_ed,5),Emrld)
+      strokeColor: rgba(0,0,0,0.4)
+      strokeWidth: 1
+    `);
+    // Reverse CARTOColor scheme
+    const CartoColorReverseViz = new carto.Viz(`
+      color: ramp(globalQuantiles($pct_higher_ed,5),reverse(Emrld))
+      strokeColor: rgba(0,0,0,0.4)
+      strokeWidth: 1
+    `);
+    // Color with ColorBrewer scheme
+    const ColorBrewerViz = new carto.Viz(`
+      color: ramp(globalQuantiles($pct_higher_ed,5),cb_YlGn)
+      strokeColor: rgba(0,0,0,0.4)
+      strokeWidth: 1
+    `);
+    // Color with ColorBrewer scheme
+    const ColorBrewerReverseViz = new carto.Viz(`
+      color: ramp(globalQuantiles($pct_higher_ed,5),reverse(cb_YlGn))
+      strokeColor: rgba(0,0,0,0.4)
+      strokeWidth: 1
+    `);
+    // Color with custom colors
+    const CustomColorsViz = new carto.Viz(`
+      color: ramp(globalQuantiles($pct_higher_ed, 5),[#234a67, #fad780])
+      strokeColor: rgba(0,0,0,0.4)
+      strokeWidth: 1
+    `);
+
+    const source = new carto.source.Dataset('higher_edu_by_county');
+    const layer = new carto.Layer('layer', source, CartoColorViz);
+
+    layer.addTo(map, 'watername_ocean');
+    layer.on('loaded', hideLoader);
+
+    function setCartoColor() {
+      layer.blendToViz(CartoColorViz);
+    }
+    function setCartoColorReverse() {
+      layer.blendToViz(CartoColorReverseViz);
+    }
+    function setColorBrewer() {
+      layer.blendToViz(ColorBrewerViz);
+    }
+    function setColorBrewerReverse() {
+      layer.blendToViz(ColorBrewerReverseViz);
+    }
+    function setCustomColors() {
+      layer.blendToViz(CustomColorsViz);
+    }
+    function hideLoader() {
+      document.getElementById('loader').style.opacity = '0';
+    }
+  </script>
+</body>
+</html>

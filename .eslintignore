@@ -3,4 +3,6 @@
 /doc
 /docs
 /example
-/vendor
+/examples/ignore
+/test/acceptance/docker/Windshaft-cartodb
+/temp

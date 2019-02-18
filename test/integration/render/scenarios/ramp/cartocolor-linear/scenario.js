@@ -1,4 +1,4 @@
-const map = new carto.Map({
+const map = new CartoMap({
     container: 'map',
     background: 'black'
 });
@@ -8,3 +8,6 @@ const viz = new carto.Viz('color: ramp(linear($numeric, 0, 10), PRISM), width: 5
 const layer = new carto.Layer('layer', source, viz);
 
 layer.addTo(map);
+layer.on('loaded', () => {
+    window.loaded = true;
+});
