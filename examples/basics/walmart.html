@@ -5,11 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
   <!-- Include CARTO VL JS -->
-  <script src="https://libs.cartocdn.com/carto-vl/v0.4.0/carto-vl.js"></script>
-  <!-- Include Mapbox GL JS -->
-  <script src="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.js"></script>
-  <!-- Include Mapbox GL CSS -->
-  <link href="https://libs.cartocdn.com/mapbox-gl/v0.45.0-carto1/mapbox-gl.css" rel="stylesheet" />
+  <script src="https://libs.cartocdn.com/carto-vl/v1.3.0/carto-vl.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -274,7 +272,7 @@
         color: opacity(ramp(globalQuantiles($cartodb_id, 7), Geyser), 0.3)
         strokeWidth: 1
         strokeColor: opacity(ramp(globalQuantiles($cartodb_id, 7), Geyser), 0.7)
-        filter: torque(linear($cartodb_id, 1, 3108), ${duration}, fade(0.1,${duration}))+0.1
+        filter: animation(linear($cartodb_id, 1, 3108), ${duration}, fade(0.1,${duration}))+0.1
         resolution: 1
       `);
 
@@ -283,14 +281,14 @@
         color: opacity(ramp(globalQuantiles($cartodb_id, 7), Geyser), 0.3)
         strokeWidth: 2
         strokeColor: opacity(ramp(globalQuantiles($cartodb_id, 7), Geyser), 0.7)
-        filter: torque(linear($cartodb_id, 1, 78), ${duration}, fade(0.1,${duration}))+0.1
+        filter: animation(linear($cartodb_id, 1, 78), ${duration}, fade(0.1,${duration}))+0.1
         resolution: 1
       `);
 
       const pointsViz2 = new carto.Viz(`
         width: 30
         color: opacity(ramp(globalQuantiles($cartodb_id, 7), Geyser), 0.2)
-        filter: torque(linear($cartodb_id, 1, 3108), ${duration}, fade(0.1,0.5))
+        filter: animation(linear($cartodb_id, 1, 3108), ${duration}, fade(0.1,0.5))
         strokeWidth: 0
       `);
       const pointsLayer = new carto.Layer('pointsLayer', pointsSource, pointsViz);
@@ -300,7 +298,7 @@
       const singlePointsLayer = new carto.Layer('singlePointsLayer', pointsSource, pointsViz2);
 
       const s = carto.expressions;
-      const torque = s.torque(s.linear(s.prop('cartodb_id'), 1, 3108), duration, s.fade(0.1,0.5));
+      const animation = s.animation(s.linear(s.prop('cartodb_id'), 1, 3108), duration, s.fade(0.1,0.5));
 
       const linesSource = new carto.source.SQL(`
         SELECT cartodb_id, the_geom, open_date, st_transform(the_geom, 2163) AS the_geom_webmercator, EXTRACT(YEAR FROM open_date) as year
@@ -309,21 +307,21 @@
       const linesViz = new carto.Viz(`
         width: 1
         color: opacity(ramp(globalQuantiles($cartodb_id, 7), Geyser), 0.3)
-        filter: torque(linear($cartodb_id, 1, 3108), ${duration}, fade(0.1,0.5))+0.005
+        filter: animation(linear($cartodb_id, 1, 3108), ${duration}, fade(0.1,0.5))+0.005
       `);
       const linesLayer = new carto.Layer('linesLayer', linesSource, linesViz);
 
-      const torque2 = s.torque(s.linear(s.prop('year'), 1962, 2006), duration, s.fade(0,0));
+      const animation2 = s.animation(s.linear(s.prop('year'), 1962, 2006), duration, s.fade(0,0));
 
       const linesViz2 = new carto.Viz({
         width: 0,
-        filter: torque2
+        filter: animation2
       });
       const linesLayer2 = new carto.Layer('linesLayer2', linesSource, linesViz2);
 
       const yearContent = document.querySelector('#year');
       setInterval(() => {
-          year  = Math.floor(torque2.getSimTime());
+          year  = Math.floor(animation2.getProgressValue());
           yearContent.innerText = `Expansion of Walmart from 1962 until ${year}`;
       }, 250);
 
@@ -387,7 +385,6 @@
             return t;
           }
         });
-        document.getElementById('loader').style.opacity = '0';
       }
     }
   </script>

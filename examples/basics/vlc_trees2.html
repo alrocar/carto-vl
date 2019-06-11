@@ -4,12 +4,9 @@
   <title>Árboles Valencia | CARTO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <!-- Include CARTO VL JS -->
-  <script src="../../dist/carto-vl.js"></script>
-  <!-- Include Mapbox GL JS -->
-  <script src="../../vendor/mapbox-gl-dev.js"></script>
-  <!-- Include Mapbox GL CSS -->
-  <link href="../../vendor/mapbox-gl-dev.css" rel="stylesheet" />
+  <script src="https://libs.cartocdn.com/carto-vl/v1.3.0/carto-vl.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css" rel="stylesheet" />
   <link href="../style.css" rel="stylesheet" />
   <style>
     body {
@@ -114,11 +111,12 @@
     `);
     // color: opacity(ramp(linear(log(clusterAvg($grupo)), 0, 4), Geyser), clusterSum($grupo)*zoom()/100000*1.8*4)
     const treesViz = new carto.Viz(`
+      @distance: $distance
       color: ramp($grupo, Geyser)
-      width: zoom() / 5000
+      width: zoom() / 10
       strokeWidth: 0
       resolution: 0.25
-      filter: torque($distance,3,fade(0.01,1.5)) + 0.1
+      filter: animation(@distance,3,fade(0.01,1.5)) + 0.1
     `);
     const treesLayer = new carto.Layer('trees', treesSource, treesViz);
     treesLayer.on('loaded', hideLoader);

@@ -4,12 +4,9 @@
   <title>Four color theorem | CARTO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8">
-  <!-- Include CARTO VL JS -->
-  <script src="../../dist/carto-vl.min.js"></script>
-  <!-- Include Mapbox GL JS -->
-  <script src="../../vendor/mapbox-gl-dev.js"></script>
-  <!-- Include Mapbox GL CSS -->
-  <link href="../../vendor/mapbox-gl-dev.css" rel="stylesheet" />
+  <script src="https://libs.cartocdn.com/carto-vl/v1.3.0/carto-vl.min.js"></script>
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.0.0/mapbox-gl.css" rel="stylesheet" />
 <link href="../style.css" rel="stylesheet" />
   <style>
     body {
@@ -78,8 +75,8 @@
     `);
     const linesViz = new carto.Viz(`
       width: 1/2/2
-      color: ramp(buckets($color, 1, 2, 3, 4, 5, 6), Bold)
-      filter: torque(linear($ord, 0 , 42890), ${duration}, fade(0.1,0.5))
+      color: ramp(buckets($color, [1, 2, 3, 4, 5, 6]), Bold)
+      filter: animation(linear($ord, 0 , 42890), ${duration}, fade(0.1,0.5))
     `);
     const linesLayer = new carto.Layer('linesLayer', linesSource, linesViz);
 
@@ -87,8 +84,9 @@
       mnmappluto_1_polys
     `);
     const polyViz = new carto.Viz(`
-      color: ramp(buckets($color, 1, 2, 3, 4, 5, 6), Bold)
-      filter: torque(linear($ord, 0, 42890), ${duration}, fade(0,120))
+      color: ramp(buckets($color, [1, 2, 3, 4, 5, 6]), Bold)
+      strokeWidth: 0
+      filter: animation(linear($ord, 0, 42890), ${duration}, fade(0,120))
     `);
     const polyLayer = new carto.Layer('polyLayer', polySource, polyViz);
 
